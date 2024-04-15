@@ -1,5 +1,8 @@
 package org.example.lesson7;
 
+import java.util.LinkedList;
+import java.util.List;
+
 // Клас BinaryTree для реалізації бінарного дерева
 public class BinaryTree {
     private Node root;
@@ -45,7 +48,11 @@ public class BinaryTree {
         System.out.println(binaryTree.search(binaryTree.root, 5)); // true
         System.out.println(binaryTree.search(binaryTree.root, 7)); // true
         // Виведення суми всіх елементів дерева
-        System.out.println(getSumElementsRecurse(binaryTree.root));
+//        System.out.println(getSumElementsRecurse(binaryTree.root));
+
+        LinkedList<Integer> list = new LinkedList<>();
+        defineLongestWay(list, binaryTree.root);
+        System.out.println(list);
     }
 
     // Метод search для пошуку елемента у бінарному дереві
@@ -77,4 +84,45 @@ public class BinaryTree {
         // Повернення результату суми
         return result;
     }
+
+    // Метод defineLongestWay призначений для знаходження найдовшого шляху у бінарному дереві та запису його значень у передану чергу.
+// Вхідні параметри:
+// - list: черга LinkedList<Integer>, у яку будуть записуватися значення найдовшого шляху
+// - node: поточний вузол, з якого починається пошук найдовшого шляху
+// Повертає: суму значень на найдовшому шляху, яка включає значення поточного вузла
+    private static int defineLongestWay(LinkedList<Integer> list, Node node) {
+        // Базовий випадок: якщо вузол не існує, повертаємо 0
+        if (node == null) {
+            return 0;
+        }
+
+        // Додаємо значення поточного вузла до черги
+        list.addLast(node.value);
+
+        // Ініціалізуємо чергу та суму для лівого піддерева
+        LinkedList<Integer> leftWay = new LinkedList<>();
+        int leftSum = defineLongestWay(leftWay, node.left);
+
+        // Ініціалізуємо чергу та суму для правого піддерева
+        LinkedList<Integer> rightWay = new LinkedList<>();
+        int rightSum = defineLongestWay(rightWay, node.right);
+
+        // Порівнюємо суми лівого та правого піддерев і визначаємо, який шлях є найдовшим
+        if (leftSum > rightSum) {
+            // Якщо лівий шлях найдовший, додаємо його значення до черги
+            if (node.left != null) {
+                list.addAll(leftWay);
+            }
+            // Повертаємо суму значень на найдовшому шляху, включаючи значення поточного вузла
+            return leftSum + node.value;
+        } else {
+            // Якщо правий шлях найдовший, додаємо його значення до черги
+            if (node.right != null) {
+                list.addAll(rightWay);
+            }
+            // Повертаємо суму значень на найдовшому шляху, включаючи значення поточного вузла
+            return rightSum + node.value;
+        }
+    }
+
 }
